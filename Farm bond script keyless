@@ -1,183 +1,94 @@
--- Create ScreenGui
-local gui = Instance.new("ScreenGui")
-gui.Name = "RaptureBondFarmUI"
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
-gui.Parent = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- Fullscreen green background
-local bg = Instance.new("Frame")
-bg.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-bg.BackgroundTransparency = 0.5
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.Position = UDim2.new(0, 0, 0, 0)
-bg.Parent = gui
-
--- Title
-local textLabel = Instance.new("TextLabel")
-textLabel.Text = "Rapture Bond Farm"
-textLabel.TextScaled = true
-textLabel.Font = Enum.Font.GothamBold
-textLabel.Size = UDim2.new(0.6, 0, 0.2, 0)
-textLabel.Position = UDim2.new(0.2, 0, 0.35, 0)
-textLabel.BackgroundTransparency = 1
-textLabel.TextStrokeTransparency = 0.5
-textLabel.Parent = gui
-
--- Bond count from leaderstats
-local bondCounter = Instance.new("TextLabel")
-bondCounter.Text = "Bonds collected: 0"
-bondCounter.TextScaled = true
-bondCounter.Font = Enum.Font.Gotham
-bondCounter.Size = UDim2.new(0.5, 0, 0.1, 0)
-bondCounter.Position = UDim2.new(0.25, 0, 0.52, 0)
-bondCounter.BackgroundTransparency = 1
-bondCounter.TextStrokeTransparency = 0.5
-bondCounter.TextColor3 = Color3.fromRGB(255, 255, 255)
-bondCounter.Parent = gui
-
--- Simulated bond collection display
-local BondsLabel = Instance.new("TextLabel")
-BondsLabel.Text = "0 bonds collected"
-BondsLabel.TextScaled = true
-BondsLabel.Font = Enum.Font.Gotham
-BondsLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
-BondsLabel.Position = UDim2.new(0.25, 0, 0.63, 0)
-BondsLabel.BackgroundTransparency = 1
-BondsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-BondsLabel.Parent = gui
-
-local UIGradient = Instance.new("UIGradient")
-UIGradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.new(1, 0, 0)),
-	ColorSequenceKeypoint.new(0.25, Color3.new(0, 1, 0)),
-	ColorSequenceKeypoint.new(0.5, Color3.new(0, 1, 1)),
-	ColorSequenceKeypoint.new(0.75, Color3.new(1, 0, 1)),
-	ColorSequenceKeypoint.new(1, Color3.new(1, 0, 0)),
-}
-UIGradient.Rotation = 0
-UIGradient.Parent = BondsLabel
-
--- Status label
-local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Text = ""
-StatusLabel.TextScaled = true
-StatusLabel.Font = Enum.Font.Gotham
-StatusLabel.Size = UDim2.new(0.5, 0, 0.1, 0)
-StatusLabel.Position = UDim2.new(0.25, 0, 0.74, 0)
-StatusLabel.BackgroundTransparency = 1
-StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-StatusLabel.Parent = gui
-
--- Rainbow outline
-local outlines = {}
-local function createOutline(name, size, position)
-	local line = Instance.new("Frame")
-	line.Name = name
-	line.Size = size
-	line.Position = position
-	line.BackgroundColor3 = Color3.fromHSV(0, 1, 1)
-	line.BorderSizePixel = 0
-	line.Parent = gui
-	table.insert(outlines, line)
+-- Check if public server
+if game.PrivateServerId == "" then
+    player:Kick("Join private server lil bro it only works on Private server")
+    return
 end
 
-createOutline("Top", UDim2.new(1, 0, 0, 4), UDim2.new(0, 0, 0, 0))
-createOutline("Bottom", UDim2.new(1, 0, 0, 4), UDim2.new(0, 0, 1, -4))
-createOutline("Left", UDim2.new(0, 4, 1, 0), UDim2.new(0, 0, 0, 0))
-createOutline("Right", UDim2.new(0, 4, 1, 0), UDim2.new(1, -4, 0, 0))
+--// Create black screen UI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RaptureFarmUI"
+screenGui.IgnoreGuiInset = true
+screenGui.DisplayOrder = 9999
+screenGui.Parent = playerGui
 
--- Animate rainbow
-task.spawn(function()
-	local hue = 0
-	while true do
-		hue = (hue + 1) % 360
-		local color = Color3.fromHSV(hue / 360, 1, 1)
-		textLabel.TextColor3 = color
-		for _, outline in ipairs(outlines) do
-			outline.BackgroundColor3 = color
-		end
-		task.wait(0.03)
-	end
+local blackFrame = Instance.new("Frame")
+blackFrame.Size = UDim2.new(1, 0, 1, 0)
+blackFrame.Position = UDim2.new(0, 0, 0, 0)
+blackFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+blackFrame.BackgroundTransparency = 0
+blackFrame.Parent = screenGui
+
+-- Top text
+local topLabel = Instance.new("TextLabel")
+topLabel.Size = UDim2.new(1, 0, 0, 50)
+topLabel.Position = UDim2.new(0, 0, 0, 0)
+topLabel.Text = "Rapture Bond farm"
+topLabel.TextColor3 = Color3.new(1, 1, 1)
+topLabel.BackgroundTransparency = 1
+topLabel.Font = Enum.Font.SourceSansBold
+topLabel.TextSize = 40
+topLabel.Parent = blackFrame
+
+-- Center text
+local centerLabel = Instance.new("TextLabel")
+centerLabel.Size = UDim2.new(1, 0, 0, 50)
+centerLabel.Position = UDim2.new(0, 0, 0.5, -25)
+centerLabel.Text = "Creating party please wait..."
+centerLabel.TextColor3 = Color3.new(1, 1, 1)
+centerLabel.BackgroundTransparency = 1
+centerLabel.Font = Enum.Font.SourceSansBold
+centerLabel.TextSize = 30
+centerLabel.Parent = blackFrame
+
+--// Wait for character
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+-- Wait a bit so UI is visible
+task.wait(1)
+
+-- Teleport
+hrp.CFrame = CFrame.new(64.4, 7.6, 154.0)
+
+-- Wait a bit after teleport
+task.wait(1)
+
+-- Execute your farm script
+local success, err = pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/RaptureOfc/Farm-bond-script-keyless/refs/heads/main/Farm%20bond%20script%20keyless"))()
 end)
 
--- Leaderstats tracker
-local player = game:GetService("Players").LocalPlayer
-task.spawn(function()
-	repeat wait() until player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Bonds")
-	local bondsValue = player.leaderstats.Bonds
-	bondsValue:GetPropertyChangedSignal("Value"):Connect(function()
-		bondCounter.Text = "Bonds collected: " .. bondsValue.Value
-	end)
-	bondCounter.Text = "Bonds collected: " .. bondsValue.Value
-end)
+-- Remove our black screen UI
+if screenGui then
+    screenGui:Destroy()
+end
 
--- Bond simulation logic
-local bonds = 1
-local targetBonds = math.random(70, 90)
-local totalTime = 85
-local interval = (totalTime / (targetBonds - bonds)) * 1.2
+-- Wait a bit to let farm UI fully load
+task.wait(2)
 
-task.spawn(function()
-	task.wait(12)
-	print("Starting bond collection...")
-	while bonds < targetBonds do
-		task.wait(interval)
-		bonds = math.min(bonds + math.random(2, 5), targetBonds)
-		BondsLabel.Text = tostring(bonds) .. " bonds collected"
-		print("Updated Bonds:", bonds)
-	end
-	StatusLabel.Text = "Bonds collection completed!"
-end)
+-- Remove rainbow text, green background, and bonds collected label
+for _, gui in ipairs(playerGui:GetChildren()) do
+    if gui:IsA("ScreenGui") then
+        for _, obj in ipairs(gui:GetDescendants()) do
+            -- Remove rainbow text
+            if obj:IsA("TextLabel") and obj.Text == "Rapture Bond farm" then
+                obj:Destroy()
+            end
+            -- Remove green background (transparency 0.5)
+            if obj:IsA("Frame") and obj.BackgroundColor3 == Color3.new(0, 1, 0) and obj.BackgroundTransparency == 0.5 then
+                obj:Destroy()
+            end
+            -- Remove "0 Bonds collected"
+            if obj:IsA("TextLabel") and string.find(obj.Text, "0 Bonds collected") then
+                obj:Destroy()
+            end
+        end
+    end
+end
 
--- Status update
-task.spawn(function()
-	task.wait(60)
-	StatusLabel.Text = "Restarting script soon"
-end)
-
--- Gradient spin animation
-task.spawn(function()
-	while true do
-		for i = 0, 360, 3 do
-			UIGradient.Rotation = i
-			task.wait(0.05)
-		end
-	end
-end)
-
--- Auto Execute Remote Scripts
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newqueue.github.io/refs/heads/main/erner.lua"))()
-
-task.spawn(function()
-	task.wait(4)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/unrele.github.io/refs/heads/main/roek.lua"))()
-end)
-
-task.spawn(function()
-	task.wait(120)
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ewewe514/lowserver.github.io/refs/heads/main/lowserver.lua"))()
-end)
-
--- Anti-AFK
-task.spawn(function()
-	local function antiIdle()
-		local character = player.Character or player.CharacterAdded:Wait()
-		local rootPart = character:FindFirstChild("HumanoidRootPart")
-		if not rootPart then return end
-		local lastPosition = rootPart.Position
-		while true do
-			task.wait(10)
-			if not rootPart.Parent then break end
-			if (rootPart.Position - lastPosition).Magnitude < 5 then
-				local humanoid = character:FindFirstChildOfClass("Humanoid")
-				if humanoid then
-					humanoid.Jump = true
-				end
-			end
-			lastPosition = rootPart.Position
-		end
-	end
-	antiIdle()
-	player.CharacterAdded:Connect(antiIdle)
-end)
+if not success then
+    warn("Failed to load farm script:", err)
+end
